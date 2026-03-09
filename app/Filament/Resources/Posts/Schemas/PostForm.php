@@ -27,14 +27,26 @@ class PostForm
                     ->schema([
                         Group::make([
                             TextInput::make('title')
-                                ->required()
-                                ->maxLength(255),
-                            TextInput::make('slug')->required(),
+                                ->rules('required|min:5')
+                                ->maxLength(255)
+                                ->validationMessages([
+                                    'required' => 'Judul wajib diisi.',
+                                    'min' => 'Judul minimal 5 karakter.',
+                                ]),
+                            TextInput::make('slug')
+                                ->rules('required|min:3')
+                                ->unique()
+                                ->validationMessages([
+                                    'unique' => 'Slug must be uniqe'
+                                ]),
+
                             Select::make('category_id')
                                 ->relationship('category', 'name')
+                                ->required()
                                 ->preload()
                                 ->searchable(),
-                            ColorPicker::make("color"),
+
+                            ColorPicker::make('color'),
                         ])->columns(2),
 
                         MarkdownEditor::make('body')
@@ -49,6 +61,7 @@ class PostForm
                         ->icon('heroicon-o-photo')
                         ->schema([
                             FileUpload::make('image')
+                                ->required()
                                 ->disk('public')
                                 ->directory('posts'),
                         ]),
