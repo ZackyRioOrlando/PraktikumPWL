@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Posts\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ColorColumn;
@@ -21,23 +23,40 @@ class PostsTable
         return $table
             ->columns([
                 //
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('title')
                     ->sortable()
+                    ->toggleable()
                     ->searchable(),
                 TextColumn::make('slug')
                     ->sortable()
+                    ->toggleable()
                     ->searchable(),
                 TextColumn::make('category.name')
                     ->sortable()
+                    ->toggleable()
                     ->searchable(),
-                ColorColumn::make('color'),
+                ColorColumn::make('color')
+                    ->toggleable(),
                 ImageColumn::make('image')
                     ->disk('public')
-                    ->visibility('public'),
+                    ->visibility('public')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('tags')
+                    ->label('Tags')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make('published')
+                    ->boolean()
+                    ->label('Published')
+                    ->toggleable(),
             ])->defaultSort('created_at', 'desc')
             ->filters([
                 Filter::make('created_at')
@@ -59,6 +78,8 @@ class PostsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
+                ReplicateAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
