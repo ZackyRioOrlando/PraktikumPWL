@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
+use App\Models\Category;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -42,8 +43,9 @@ class PostForm
 
                             Select::make('category_id')
                                 ->relationship('category', 'name')
+                                ->options(Category::all()->pluck('name', 'id'))
                                 ->required()
-                                ->preload()
+                                // ->preload()
                                 ->searchable(),
 
                             ColorPicker::make('color'),
